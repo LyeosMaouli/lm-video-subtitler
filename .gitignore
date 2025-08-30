@@ -69,8 +69,24 @@ logs/
 temp/
 tmp/
 
-# Output files
-output/
-subtitles/
-translated_subtitles/
-merged/
+# Backup files
+*.backup*
+*.bak
+
+# Output directories (keep structure but ignore content)
+output/*
+!output/.gitkeep
+subtitles/*
+!subtitles/.gitkeep
+translated_subtitles/*
+!translated_subtitles/.gitkeep
+merged/*
+!merged/.gitkeep
+
+# Test and temporary scripts
+test_*.py
+*_test.py
+fix_*.py
+clean_*.py
+comprehensive_*.py
+final_*.py

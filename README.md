@@ -9,6 +9,7 @@ A Python application that extracts subtitles from video files (MKV, MP4, etc.), 
 - **Video Processing**: Incorporate translated subtitles back into videos (embedded or hardcoded)
 - **Batch Processing**: Process multiple videos automatically
 - **Multiple Output Formats**: Support for both embedded and hardcoded subtitle videos
+- **Graphical User Interface**: Easy-to-use GUI for managing video processing
 
 ## Requirements
 
@@ -17,11 +18,55 @@ A Python application that extracts subtitles from video files (MKV, MP4, etc.), 
 - **Python 3.8+**: For running the application
 - **Windows 10/11**: Tested on Windows, but should work on other platforms
 
-### FFmpeg Installation
+### FFmpeg Installation (Windows)
+
+**Option 1: Download and Install Manually**
 1. Download FFmpeg from [https://ffmpeg.org/download.html](https://ffmpeg.org/download.html)
-2. Extract to a folder (e.g., `C:\ffmpeg`)
-3. Add the `bin` folder to your system PATH environment variable
-4. Verify installation by running `ffmpeg -version` in command prompt
+2. Extract the ZIP file to a folder (e.g., `C:\ffmpeg`)
+3. Add the `bin` folder to your system PATH environment variable:
+   - Open System Properties → Advanced → Environment Variables
+   - Edit the PATH variable and add `C:\ffmpeg\bin`
+4. Restart your command prompt/terminal
+5. Verify installation by running `ffmpeg -version`
+
+**Option 2: Using Chocolatey (Recommended)**
+```cmd
+choco install ffmpeg
+```
+
+**Option 3: Using Scoop**
+```cmd
+scoop install ffmpeg
+```
+
+**Option 4: Using Winget**
+```cmd
+winget install ffmpeg
+```
+
+### FFmpeg Installation (macOS)
+```bash
+# Using Homebrew
+brew install ffmpeg
+
+# Using MacPorts
+sudo port install ffmpeg
+```
+
+### FFmpeg Installation (Linux)
+```bash
+# Ubuntu/Debian
+sudo apt update
+sudo apt install ffmpeg
+
+# CentOS/RHEL/Fedora
+sudo yum install ffmpeg
+# or
+sudo dnf install ffmpeg
+
+# Arch Linux
+sudo pacman -S ffmpeg
+```
 
 ## Installation
 
@@ -33,10 +78,13 @@ A Python application that extracts subtitles from video files (MKV, MP4, etc.), 
 
 2. **Create a virtual environment (recommended)**
    ```bash
+   # Windows
    python -m venv venv
-   venv\Scripts\activate  # On Windows
-   # or
-   source venv/bin/activate  # On Linux/Mac
+   venv\Scripts\activate
+   
+   # macOS/Linux
+   python3 -m venv venv
+   source venv/bin/activate
    ```
 
 3. **Install Python dependencies**
@@ -157,17 +205,15 @@ lm-video-subtitler/
 ├── modules/                  # Core application modules
 │   ├── __init__.py
 │   ├── core_processor.py     # Core video processing logic
-│   ├── settings_manager.py   # Application settings management
-│   ├── ui_components.py      # Reusable GUI components
-│   └── README.md             # Modules documentation
+│   ├── mcp_client.py         # LARA MCP Server communication
+│   ├── subtitle_extractor.py # Subtitle extraction using FFmpeg
+│   ├── video_processor.py    # Video processing and subtitle incorporation
+│   └── ui_components.py      # Reusable GUI components
 ├── tools/                    # Utility scripts
 │   ├── __init__.py
-│   ├── rename_videos.py      # Video filename cleanup utility
-│   └── README.md             # Tools documentation
+│   └── rename_videos.py      # Video filename cleanup utility
+├── docs/                     # Documentation
 ├── config.py                 # Configuration and constants
-├── subtitle_extractor.py     # Subtitle extraction module
-├── translator.py             # Translation module using LARA MCP Server
-├── video_processor.py        # Video processing and subtitle incorporation
 ├── main.py                   # Main application and CLI interface
 ├── gui.py                    # Graphical user interface
 ├── requirements.txt          # Python dependencies
@@ -191,6 +237,8 @@ lm-video-subtitler/
 1. **FFmpeg not found**
    - Ensure FFmpeg is installed and in your system PATH
    - Test with `ffmpeg -version` in command prompt
+   - On Windows, make sure you've added the `bin` folder to PATH, not the main folder
+   - Restart your terminal/command prompt after adding to PATH
 
 2. **LARA MCP Server connection failed**
    - Check your `.env` file configuration
@@ -213,13 +261,13 @@ For detailed error information, you can modify the code to enable debug logging 
 
 ```bash
 # Test subtitle extraction
-python subtitle_extractor.py
+python -c "from modules.subtitle_extractor import SubtitleExtractor; print('Subtitle extractor loaded successfully')"
 
 # Test translation
-python translator.py
+python -c "from modules.mcp_client import MCPClient; print('MCP client loaded successfully')"
 
 # Test video processing
-python video_processor.py
+python -c "from modules.video_processor import VideoProcessor; print('Video processor loaded successfully')"
 ```
 
 ## Performance Considerations
