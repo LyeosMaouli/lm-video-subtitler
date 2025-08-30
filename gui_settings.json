@@ -1,0 +1,18 @@
+{
+  "input_folder": "C:/dev/lm-video-subtitler/output",
+  "output_folder": "C:/dev/lm-video-subtitler/merged",
+  "window_geometry": "1000x700",
+  "last_used_folders": [
+    "C:/dev/lm-video-subtitler/output",
+    "C:/dev/lm-video-subtitler/base_videos"
+  ],
+  "recent_outputs": [
+    "C:/dev/lm-video-subtitler/merged",
+    "C:/dev/lm-video-subtitler/output"
+  ],
+  "translation_settings": {
+    "source_language": "en",
+    "target_language": "fr",
+    "test_text": "Hello, how are you?"
+  }
+}

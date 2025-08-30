@@ -1,0 +1,23 @@
+# Video processing
+ffmpeg-python==0.2.0
+pysrt==1.1.2
+
+# OpenAI for AI agent functionality
+openai>=1.102.0
+
+# HTTP requests for MCP server
+requests==2.31.0
+
+# MCP Server communication
+mcp==1.13.1
+
+# Subtitle processing
+chardet==5.2.0
+
+# Utilities
+python-dotenv==1.0.0
+tqdm==4.66.1
+click==8.1.7
+
+# Optional: for better subtitle detection
+pysubs2==1.6.1
