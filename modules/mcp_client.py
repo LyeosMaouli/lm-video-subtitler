@@ -113,14 +113,14 @@ class MCPClient:
             response = self._send_mcp_request(request)
             
             if "error" not in response:
-                print("✅ MCP connection test successful")
+                print("[OK] MCP connection test successful")
                 return True
             else:
-                print(f"❌ MCP connection test failed: {response.get('error', 'Unknown error')}")
+                print(f"[ERROR] MCP connection test failed: {response.get('error', 'Unknown error')}")
                 return False
                 
         except Exception as e:
-            print(f"❌ MCP connection test error: {e}")
+            print(f"[ERROR] MCP connection test error: {e}")
             return False
     
     def translate_text(self, text: str, source_lang: str = "en", target_lang: str = "fr") -> Optional[str]:
@@ -200,11 +200,11 @@ class MCPClient:
                         return self._fix_french_encoding(translated_text)
             
             # If all methods fail, return original text
-            print(f"❌ Translation failed: No working method found")
+            print(f"[ERROR] Translation failed: No working method found")
             return text
                 
         except Exception as e:
-            print(f"❌ Translation error: {e}")
+            print(f"[ERROR] Translation error: {e}")
             return text
     
     def translate_batch(self, texts: List[str], source_lang: str = "en", target_lang: str = "fr") -> List[Optional[str]]:
@@ -220,7 +220,7 @@ class MCPClient:
             response = self._send_mcp_request(request)
             
             if "error" in response:
-                print(f"❌ Batch translation failed: {response['error']}")
+                print(f"[ERROR] Batch translation failed: {response['error']}")
                 # Fallback to individual translations
                 return [self.translate_text(text, source_lang, target_lang) for text in texts]
             
@@ -236,7 +236,7 @@ class MCPClient:
                 return texts
                 
         except Exception as e:
-            print(f"❌ Batch translation error: {e}")
+            print(f"[ERROR] Batch translation error: {e}")
             # Fallback to individual translations
             return [self.translate_text(text, source_lang, target_lang) for text in texts]
     
@@ -269,11 +269,11 @@ class MCPClient:
             with open(output_path, 'w', encoding='utf-8') as f:
                 f.write(translated_content)
             
-            print(f"✅ Translated subtitle saved to: {output_path}")
+            print(f"[OK] Translated subtitle saved to: {output_path}")
             return output_path
             
         except Exception as e:
-            print(f"❌ Subtitle file translation error: {e}")
+            print(f"[ERROR] Subtitle file translation error: {e}")
             return None
     
     def _extract_srt_texts(self, srt_content: str) -> List[str]:
@@ -358,7 +358,7 @@ class MCPClient:
             entries = self._parse_srt_entries(srt_content)
             
             if not entries:
-                print("❌ No SRT entries found to translate")
+                print("[ERROR] No SRT entries found to translate")
                 return srt_content
             
             print(f"📝 Found {len(entries)} SRT entries to translate")
@@ -373,7 +373,7 @@ class MCPClient:
                         text_entries.append(clean_text)
             
             if not text_entries:
-                print("❌ No translatable text found in SRT")
+                print("[ERROR] No translatable text found in SRT")
                 return srt_content
             
             print(f"🌐 Translating {len(text_entries)} text entries in chunks...")
@@ -402,13 +402,13 @@ class MCPClient:
                 import time
                 time.sleep(0.1)
             
-            print(f"✅ Translation completed! Processed {len(translated_texts)} entries")
+            print(f"[OK] Translation completed! Processed {len(translated_texts)} entries")
             
             # Reconstruct SRT content with translated text
             return self._reconstruct_srt_with_translations(entries, translated_texts)
             
         except Exception as e:
-            print(f"❌ SRT translation error: {e}")
+            print(f"[ERROR] SRT translation error: {e}")
             return srt_content
     
     def _fix_french_encoding(self, text: str) -> str:
@@ -532,7 +532,7 @@ class MCPClient:
     def _reconstruct_srt_with_translations(self, original_entries: List[Dict], translated_texts: List[str]) -> str:
         """Reconstruct SRT content with translated text while preserving original structure."""
         if len(original_entries) != len(translated_texts):
-            print("⚠️ Warning: Entry count mismatch, using original content")
+            print("[WARNING] Entry count mismatch, using original content")
             return self._entries_to_srt(original_entries)
         
         # Create new entries with translated text
@@ -572,35 +572,35 @@ def main():
         # Show status
         status = client.get_status()
         print(f"\n📋 Client Status:")
-        print(f"   OpenAI Configured: {'✅ Yes' if status['openai_configured'] else '❌ No'}")
-        print(f"   LARA Configured: {'✅ Yes' if status['lara_configured'] else '❌ No'}")
+        print(f"   OpenAI Configured: {'[OK] Yes' if status['openai_configured'] else '[NO] No'}")
+        print(f"   LARA Configured: {'[OK] Yes' if status['lara_configured'] else '[NO] No'}")
         print(f"   MCP Server URL: {status['mcp_server_url']}")
-        print(f"   Access Key ID: {'✅ Present' if status['access_key_id_present'] else '❌ Missing'}")
-        print(f"   Access Key Secret: {'✅ Present' if status['access_key_secret_present'] else '❌ Missing'}")
+        print(f"   Access Key ID: {'[OK] Present' if status['access_key_id_present'] else '[MISSING] Missing'}")
+        print(f"   Access Key Secret: {'[OK] Present' if status['access_key_secret_present'] else '[MISSING] Missing'}")
         
         if not status['lara_configured']:
-            print("\n❌ LARA credentials not configured!")
+            print("\n[ERROR] LARA credentials not configured!")
             print("Please check LARA_ACCESS_KEY_ID and LARA_ACCESS_KEY_SECRET in your .env file")
             return
         
         # Test connection
         print(f"\n🔗 Testing connection to LARA MCP server...")
         if client.test_connection():
-            print("✅ Successfully connected to LARA MCP Server")
+            print("[OK] Successfully connected to LARA MCP Server")
             
             # Test translation
             test_text = "Hello, how are you?"
             print(f"\n🌐 Testing translation: '{test_text}'")
             translated = client.translate_text(test_text)
             if translated:
-                print(f"✅ Translation successful: '{test_text}' → '{translated}'")
+                print(f"[OK] Translation successful: '{test_text}' → '{translated}'")
             else:
-                print("❌ Translation failed")
+                print("[ERROR] Translation failed")
         else:
-            print("❌ Failed to connect to LARA MCP Server")
+            print("[ERROR] Failed to connect to LARA MCP Server")
     
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"[ERROR] Error: {e}")
 
 
 if __name__ == "__main__":

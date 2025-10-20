@@ -65,14 +65,14 @@ class VideoSubtitleProcessor:
             )
             
             if result_path:
-                print(f"✅ Successfully processed: {result_path.name}")
+                print(f"[OK] Successfully processed: {result_path.name}")
                 return True
             else:
-                print(f"❌ Failed to process video: {video_path.name}")
+                print(f"[ERROR] Failed to process video: {video_path.name}")
                 return False
                 
         except Exception as e:
-            print(f"❌ Error processing {video_path.name}: {e}")
+            print(f"[ERROR] Error processing {video_path.name}: {e}")
             return False
     
     def process_all_videos(self, hardcoded: bool = False) -> Dict[str, bool]:
@@ -127,9 +127,9 @@ def main(video, all, hardcoded, keep_files, test):
         print("Testing MCP server connection...")
         translator = MCPClient()
         if translator.test_connection():
-            print("✅ MCP server connection successful")
+            print("[OK] MCP server connection successful")
         else:
-            print("❌ LARA MCP server connection failed")
+            print("[ERROR] LARA MCP server connection failed")
         print("Please check your LARA_ACCESS_KEY_ID and LARA_ACCESS_KEY_SECRET configuration")
         return
     
@@ -149,9 +149,9 @@ def main(video, all, hardcoded, keep_files, test):
         
         success = processor.process_single_video(video_path, hardcoded)
         if success:
-            print(f"\n✅ Successfully processed: {video_path.name}")
+            print(f"\n[OK] Successfully processed: {video_path.name}")
         else:
-            print(f"\n❌ Failed to process: {video_path.name}")
+            print(f"\n[ERROR] Failed to process: {video_path.name}")
     
     elif all:
         # Process all videos

@@ -26,11 +26,11 @@ class VideoProcessor:
                 if FFMPEG_PATH not in os.environ.get('PATH', ''):
                     os.environ['PATH'] = FFMPEG_PATH + os.pathsep + os.environ.get('PATH', '')
                 # Only print once per class instance
-                print(f"✅ VideoProcessor: FFmpeg configured")
+                print(f"[OK] VideoProcessor: FFmpeg configured")
             else:
-                print(f"⚠️  VideoProcessor: Missing FFmpeg executables in {FFMPEG_PATH}")
+                print(f"! VideoProcessor: Missing FFmpeg executables in {FFMPEG_PATH}")
         else:
-            print(f"⚠️  VideoProcessor: FFmpeg directory not found at {FFMPEG_PATH}")
+            print(f"! VideoProcessor: FFmpeg directory not found at {FFMPEG_PATH}")
     
     def set_output_directory(self, output_dir: Path):
         """Set the output directory for video processing."""

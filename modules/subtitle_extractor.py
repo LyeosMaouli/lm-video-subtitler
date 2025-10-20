@@ -28,11 +28,11 @@ class SubtitleExtractor:
                 if FFMPEG_PATH not in os.environ.get('PATH', ''):
                     os.environ['PATH'] = FFMPEG_PATH + os.pathsep + os.environ.get('PATH', '')
                 # Only print once per class instance
-                print(f"✅ SubtitleExtractor: FFmpeg configured")
+                print(f"[OK] SubtitleExtractor: FFmpeg configured")
             else:
-                print(f"⚠️  SubtitleExtractor: Missing FFmpeg executables in {FFMPEG_PATH}")
+                print(f"! SubtitleExtractor: Missing FFmpeg executables in {FFMPEG_PATH}")
         else:
-            print(f"⚠️  SubtitleExtractor: FFmpeg directory not found at {FFMPEG_PATH}")
+            print(f"! SubtitleExtractor: FFmpeg directory not found at {FFMPEG_PATH}")
         
     def get_video_info(self, video_path: Path) -> Dict:
         """Get information about a video file including available subtitle tracks."""
