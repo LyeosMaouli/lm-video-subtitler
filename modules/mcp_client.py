@@ -174,19 +174,30 @@ class MCPClient:
                                             import json
                                             parsed = json.loads(text_content)
                                             if isinstance(parsed, list) and len(parsed) > 0:
-                                                return parsed[0].get("text", text)
+                                                translated_text = parsed[0].get("text", text)
+                                                # Apply encoding fix for French characters
+                                                return self._fix_french_encoding(translated_text)
                                         except json.JSONDecodeError:
-                                            # If not JSON, return as is
-                                            return text_content
+                                            # If not JSON, return as is with encoding fix
+                                            return self._fix_french_encoding(text_content)
                             
                             # Try different possible result field names
                             for field in ["translated_text", "translation", "result"]:
                                 if field in response["result"]:
-                                    return response["result"][field]
+                                    translated_text = response["result"][field]
+                                    print(f"🔧 DEBUG: Raw translation from server: '{translated_text}'")
+                                    # Apply encoding fix for French characters
+                                    fixed_text = self._fix_french_encoding(translated_text)
+                                    print(f"🔧 DEBUG: Final translation after fix: '{fixed_text}'")
+                                    return fixed_text
                         else:
-                            return response["result"]
+                            translated_text = response["result"]
+                            # Apply encoding fix for French characters
+                            return self._fix_french_encoding(translated_text)
                     elif "content" in response:
-                        return response["content"]
+                        translated_text = response["content"]
+                        # Apply encoding fix for French characters
+                        return self._fix_french_encoding(translated_text)
             
             # If all methods fail, return original text
             print(f"❌ Translation failed: No working method found")
@@ -381,7 +392,9 @@ class MCPClient:
                 for j, text in enumerate(chunk):
                     translated = self.translate_text(text, source_lang, target_lang)
                     if translated and translated != text:
-                        translated_texts.append(translated)
+                        # Apply encoding fix for French characters
+                        fixed_translated = self._fix_french_encoding(translated)
+                        translated_texts.append(fixed_translated)
                     else:
                         translated_texts.append(text)  # Keep original if translation failed
                 
@@ -402,6 +415,9 @@ class MCPClient:
         """Fix common French encoding issues."""
         if not text:
             return text
+        
+        # Debug: Log the original text
+        print(f"🔧 DEBUG: Fixing encoding for: '{text}'")
         
         # Common encoding fixes for French characters
         encoding_fixes = {
@@ -430,12 +446,25 @@ class MCPClient:
             'Â¼': '¼',  # ¼
             'Â½': '½',  # ½
             'Â¾': '¾',  # ¾
+            'Â ': '',   # Remove standalone Â characters
+            'Â?': '?',  # Fix Â followed by question mark
+            'Â!': '!',  # Fix Â followed by exclamation
+            'Â.': '.',  # Fix Â followed by period
+            'Â,': ',',  # Fix Â followed by comma
         }
         
         # Apply fixes
         fixed_text = text
         for corrupted, correct in encoding_fixes.items():
-            fixed_text = fixed_text.replace(corrupted, correct)
+            if corrupted in fixed_text:
+                print(f"🔧 DEBUG: Replacing '{corrupted}' with '{correct}'")
+                fixed_text = fixed_text.replace(corrupted, correct)
+        
+        # Debug: Log the fixed text
+        if fixed_text != text:
+            print(f"🔧 DEBUG: Fixed text: '{fixed_text}'")
+        else:
+            print(f"🔧 DEBUG: No encoding issues found")
         
         return fixed_text
     

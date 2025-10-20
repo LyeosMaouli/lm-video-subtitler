@@ -130,8 +130,10 @@ class LARATranslator:
             if response.status_code == 200:
                 result = response.json()
                 translated_text = result.get('translated_text', text)
-                print(f"✅ Translation successful: '{text}' → '{translated_text}'")
-                return translated_text
+                # Apply encoding fix for French characters
+                fixed_translated_text = self._fix_french_encoding(translated_text)
+                print(f"✅ Translation successful: '{text}' → '{fixed_translated_text}'")
+                return fixed_translated_text
             else:
                 print(f"❌ Translation failed with status {response.status_code}: {response.text}")
                 return None
@@ -312,6 +314,52 @@ class LARATranslator:
             print("❌ Failed to reload valid credentials")
         
         return self._credentials_valid
+    
+    def _fix_french_encoding(self, text: str) -> str:
+        """Fix common French encoding issues."""
+        if not text:
+            return text
+        
+        # Common encoding fixes for French characters
+        encoding_fixes = {
+            'Ã©': 'é',  # é
+            'Ã¨': 'è',  # è
+            'Ã ': 'à',  # à
+            'Ã¢': 'â',  # â
+            'Ãª': 'ê',  # ê
+            'Ã®': 'î',  # î
+            'Ã´': 'ô',  # ô
+            'Ã¹': 'ù',  # ù
+            'Ã»': 'û',  # û
+            'Ã§': 'ç',  # ç
+            'Ã«': 'ë',  # ë
+            'Ã¯': 'ï',  # ï
+            'Ã¶': 'ö',  # ö
+            'Ã¼': 'ü',  # ü
+            'Ã¦': 'æ',  # æ
+            'Å"': 'œ',  # œ
+            'Â«': '«',  # «
+            'Â»': '»',  # »
+            'Â°': '°',  # °
+            'Â±': '±',  # ±
+            'Â²': '²',  # ²
+            'Â³': '³',  # ³
+            'Â¼': '¼',  # ¼
+            'Â½': '½',  # ½
+            'Â¾': '¾',  # ¾
+            'Â ': '',   # Remove standalone Â characters
+            'Â?': '?',  # Fix Â followed by question mark
+            'Â!': '!',  # Fix Â followed by exclamation
+            'Â.': '.',  # Fix Â followed by period
+            'Â,': ',',  # Fix Â followed by comma
+        }
+        
+        # Apply fixes
+        fixed_text = text
+        for corrupted, correct in encoding_fixes.items():
+            fixed_text = fixed_text.replace(corrupted, correct)
+        
+        return fixed_text
 
 
 def main():
