@@ -416,8 +416,9 @@ class MCPClient:
         if not text:
             return text
         
-        # Debug: Log the original text
+        # Debug: Log the original text and its bytes
         print(f"🔧 DEBUG: Fixing encoding for: '{text}'")
+        print(f"🔧 DEBUG: Text bytes: {text.encode('utf-8')}")
         
         # Common encoding fixes for French characters
         encoding_fixes = {
@@ -459,6 +460,21 @@ class MCPClient:
             if corrupted in fixed_text:
                 print(f"🔧 DEBUG: Replacing '{corrupted}' with '{correct}'")
                 fixed_text = fixed_text.replace(corrupted, correct)
+        
+        # Additional fix: Remove any standalone Â character followed by punctuation
+        import re
+        # Pattern to match Â followed by any punctuation
+        pattern = r'Â([?!.,:;])'
+        if re.search(pattern, fixed_text):
+            print(f"🔧 DEBUG: Found Â + punctuation pattern, applying regex fix")
+            fixed_text = re.sub(pattern, r'\1', fixed_text)
+        
+        # Fix for specific UTF-8 encoding issue: Â + non-breaking space + punctuation
+        # This handles the case where Â is followed by \xc2\xa0 (non-breaking space) and punctuation
+        pattern2 = r'Â\s*([?!.,:;])'
+        if re.search(pattern2, fixed_text):
+            print(f"🔧 DEBUG: Found Â + whitespace + punctuation pattern, applying regex fix")
+            fixed_text = re.sub(pattern2, r'\1', fixed_text)
         
         # Debug: Log the fixed text
         if fixed_text != text:
