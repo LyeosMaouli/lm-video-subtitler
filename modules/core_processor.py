@@ -423,8 +423,12 @@ class CoreProcessor:
     def test_translation(self, text: str, source_lang: str = "en", target_lang: str = "fr") -> Optional[str]:
         """Test translation with the given text."""
         try:
-            return self.translator.translate_text(text, source_lang, target_lang)
+            print(f"🔧 DEBUG: CoreProcessor.test_translation called with: '{text}'")
+            result = self.translator.translate_text(text, source_lang, target_lang)
+            print(f"🔧 DEBUG: CoreProcessor.test_translation result: '{result}'")
+            return result
         except Exception as e:
+            print(f"🔧 DEBUG: CoreProcessor.test_translation error: {e}")
             raise Exception(f"Translation failed: {e}")
     
     def get_translator_status(self) -> Dict[str, any]:

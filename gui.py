@@ -515,7 +515,9 @@ class VideoSubtitleGUI:
     def _test_translation_worker(self, text: str, source_lang: str, target_lang: str):
         """Worker thread for translation testing."""
         try:
+            print(f"🔧 DEBUG: GUI translation worker called with: '{text}' ({source_lang} -> {target_lang})")
             translated = self.core_processor.test_translation(text, source_lang, target_lang)
+            print(f"🔧 DEBUG: GUI translation worker received: '{translated}'")
             
             if translated:
                 self.root.after(0, lambda: self.translation_frame.set_translation_result(translated))
@@ -525,6 +527,7 @@ class VideoSubtitleGUI:
                 self.root.after(0, lambda: self.status_frame.log_message("Translation failed"))
         
         except Exception as e:
+            print(f"🔧 DEBUG: GUI translation worker error: {e}")
             self.root.after(0, lambda: self.translation_frame.set_translation_result("Translation error"))
             self.root.after(0, lambda: self.status_frame.log_message(f"Translation error: {e}"))
     
